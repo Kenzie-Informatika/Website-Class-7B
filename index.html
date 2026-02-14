@@ -449,7 +449,6 @@
 
         <div class="tab-bar">
             <div class="tab-btn active" id="btn-pel" onclick="loadTab('pelajaran')">PELAJARAN</div>
-            <div class="tab-btn" id="btn-pik" onclick="loadTab('piket')">PIKET</div>
         </div>
 
         <div id="schedule-content" class="schedule-grid">
@@ -592,13 +591,6 @@
                 "RABU": ["Matematika", "IPA (Sains)", "B. Indonesia", "B. Arab", "Seni Musik"],
                 "KAMIS": ["B. Inggris", "IPS", "PABP (Agama)", "PKN", "TIK"],
                 "JUMAT": ["B. Sunda", "Prakarya", "Matematika", "B. Indonesia", "Literasi"]
-            },
-            piket: {
-                "SENIN": ["AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "AQSHAL ILHAM S.", "AZAID IBNU FAHDI"],
-                "SELASA": ["BHEKTI BAHTIAR", "DADI PANGESTU", "DAFFA AL FATTAH H.", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA"],
-                "RABU": ["FAHREZA OKTA N.", "FAIZAH MAYA A.", "FATHAN KAISYA K.", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA"],
-                "KAMIS": ["INTAN NUR RAMADHANI", "KANAYA ANUGRAH A.", "KANAYA BIANCA A.", "KENI RIZKI ANINDIA", "KEYSA FEBRIANTI"],
-                "JUMAT": ["KHOLIF ADIL MUBAROK", "LULU WULAN", "MICHAELA ADELIA A.", "M. ZAHEL ALFAHMI", "MUFID AKBAR MAULANA"]
             }
         };
 
@@ -653,7 +645,7 @@
             
             // Updated names based on your document
             const students = [
-                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "ANISA SYAHPUTRI", 
+                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "ZAM ZAM AL BILAL RAMDAN",
                 "AQSHAL ILHAM SYAFATULLAH", "AZAID IBNU FAHDI", "BHEKTI BAHTIAR", "DADI PANGESTU", 
                 "DAFFA AL FATTAH HUSAINI", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA", "FAHREZA OKTA NURFAUZI", 
                 "FAIZAH MAYA APRLILIYANI", "FATHAN KAISYA KHOIRULLOH", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA", 
@@ -661,7 +653,7 @@
                 "KEYSA FEBRIANTI", "KHOLIF ADIL MUBAROK", "LULU WULAN", "MICHAELA ADELIA APRILIANI", 
                 "MOHAMMAD ZAHEL ALFAHMI", "MUFID AKBAR MAULANA", "NAJWA HABIBAH", "NAZWA REI AMALINA W.", 
                 "NISA AULIA ANGGRAENI", "RADITYA FAJRI SYAHDAN N.", "RAFKA KHANNAFI", "SOHEBUL AKMAL", 
-                "SUCI NURLAELA KELUD PUTRI", "ZAM ZAM AL BILAL RAMDAN"
+                "SUCI NURLAELA KELUD PUTRI", 
             ];
 
             students.forEach((name, index) => {
@@ -669,7 +661,7 @@
                     <div class="m-card animate__animated animate__fadeInUp">
                         <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${name}" alt="avatar">
                         <h4>${name}</h4>
-                        <p>${index === 0 ? 'Ketua Kelas' : 'Siswa 7B'}</p>
+                        <p>${index === 0 ? 'Siswa 7B' : 'Siswa 7B'}</p>
                     </div>
                 `;
             });
@@ -684,7 +676,7 @@
 
         // Initialize Home
         window.onload = () => {
-            console.log("7B Matsanesca Website Loaded Successfully");
+            console.log("7B Class Website Loaded Successfully");
         };
     </script>
 </body>
