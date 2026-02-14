@@ -281,25 +281,29 @@
         .day-card.wide { grid-column: 1 / span 2; width: 70%; margin: 0 auto; }
 
         /* =========================================
-           6. CAT MEMES GALLERY (50+ SLOTS)
+           6. GALLERY (UPDATED: CLASS PHOTO ONLY)
            ========================================= */
         .gallery-grid { 
-            display: grid; 
-            grid-template-columns: repeat(2, 1fr); 
-            gap: 12px; 
+            display: block; 
             max-width: 600px;
             margin: 0 auto;
         }
-        .cat-card { 
-            background: #000; 
-            border-radius: 20px; 
+        .class-photo-card { 
+            background: var(--glass-light); 
+            border-radius: 30px; 
             overflow: hidden; 
-            border: 1px solid var(--glass-light); 
-            height: 180px;
+            border: 1px solid var(--accent); 
             transition: 0.3s;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .cat-card:hover { transform: translateY(-5px); border-color: var(--accent); }
-        .cat-card img, .cat-card video { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+        .class-photo-card img { width: 100%; height: auto; display: block; }
+        .class-photo-card .photo-info {
+            padding: 15px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 14px;
+            background: rgba(0,0,0,0.3);
+        }
 
         /* =========================================
            7. STUDENT LIST UI
@@ -429,8 +433,7 @@
                 <i class="fas fa-ellipsis-v"></i>
             </div>
             
-            <div id="chat-messages">
-                </div>
+            <div id="chat-messages"></div>
 
             <div class="chat-input-bar">
                 <i class="far fa-smile" style="font-size: 20px; color: #8696a0;"></i>
@@ -452,18 +455,21 @@
             <div class="tab-btn active" id="btn-pel" onclick="loadTab('pelajaran')">PELAJARAN</div>
         </div>
 
-        <div id="schedule-content" class="schedule-grid">
-            </div>
+        <div id="schedule-content" class="schedule-grid"></div>
     </div>
 
     <div id="gallery" class="page">
         <div class="header-section">
             <h1>GALLERY</h1>
-            <p>Cat Memes & Moments</p>
+            <p>7B Moments</p>
         </div>
 
-        <div class="gallery-grid" id="cat-gallery">
+        <div class="gallery-grid">
+            <div class="class-photo-card animate__animated animate__zoomIn">
+                <img src="https://r.jina.ai/i/9e3a31c5040e4f208f36c4b26f530752" alt="Foto Kelas 7B">
+                <div class="photo-info">Foto Bersama 7B MTs Negeri 1 Cilacap</div>
             </div>
+        </div>
     </div>
 
     <div id="members" class="page">
@@ -471,8 +477,7 @@
             <h1>MEMBERS</h1>
             <p>Daftar Siswa 7B</p>
         </div>
-        <div id="student-list" class="student-container">
-            </div>
+        <div id="student-list" class="student-container"></div>
     </div>
 
     <div class="bottom-nav">
@@ -496,6 +501,7 @@
            ========================================= */
         
         // --- FIREBASE CONFIGURATION ---
+        // Masukkan config kamu di sini agar chat jalan
         const firebaseConfig = {
             apiKey: "ISI_API_KEY_KAMU",
             databaseURL: "ISI_DATABASE_URL_KAMU",
@@ -503,7 +509,8 @@
             appId: "ISI_APP_ID"
         };
 
-        // Initialize Firebase if config is present
+        const myLocalId = 'User_' + Math.floor(Math.random() * 9999);
+
         if(firebaseConfig.apiKey !== "ISI_API_KEY_KAMU") {
             firebase.initializeApp(firebaseConfig);
         }
@@ -521,7 +528,6 @@
             if(id === 'home') document.getElementById('n-home').classList.add('active');
             if(id === 'gallery') {
                 document.getElementById('n-gal').classList.add('active');
-                renderGallery();
             }
             if(id === 'jadwal') {
                 document.getElementById('n-jad').classList.add('active');
@@ -536,11 +542,10 @@
             const msgText = input.value.trim();
             
             if(msgText !== "") {
-                const randomId = 'User_' + Math.floor(Math.random() * 999);
                 db.ref('anonChat').push({
-                    sender: randomId,
+                    sender: myLocalId,
                     msg: msgText,
-                    timestamp: Date.now(),
+                    timestamp: firebase.database.ServerValue.TIMESTAMP,
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 });
                 input.value = "";
@@ -551,7 +556,7 @@
             }
         }
 
-        db.ref('anonChat').limitToLast(30).on('value', snap => {
+        db.ref('anonChat').limitToLast(50).on('value', snap => {
             const box = document.getElementById('chat-messages');
             box.innerHTML = "";
             
@@ -562,12 +567,12 @@
 
             snap.forEach(child => {
                 const data = child.val();
-                const isMe = data.sender.includes('User_'); 
+                const isMe = (data.sender === myLocalId); 
                 
                 const bubble = `
                     <div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
                         <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">
-                            ${data.sender}
+                            ${isMe ? "Anda" : data.sender}
                         </div>
                         ${data.msg}
                         <span class="msg-time">${data.time}</span>
@@ -609,28 +614,7 @@
             });
         }
 
-        function renderGallery() {
-            const gal = document.getElementById('cat-gallery');
-            gal.innerHTML = "";
-            
-            const catUrls = [
-                "3v1Sz0oTKRsDK", "mlvseq9nOeZh6", "jpbnoe3UIa8TUBSziz", "CjmvTCZf2U3p09Cn0h",
-                "vfkSe0aqJpceSgnT7f", "26xfid7", "3oriO5t2YwLaGiYp3y", "VbnUQpnihPSIg",
-                "v6aO3MZfVnOb6", "11mN86N3SIdlSM", "H4qzWUt1NTYI0", "o0uvO746VgCpa",
-                "6Vo66vEicXfoc", "L7XpYvYtBqQxy", "JIX9t2j0ZTN9S", "n4lHZS3C0z680"
-            ];
-
-            for(let i = 0; i < 50; i++) {
-                const gifId = catUrls[i % catUrls.length];
-                gal.innerHTML += `
-                    <div class="cat-card animate__animated animate__fadeInUp">
-                        <img src="https://media.giphy.com/media/${gifId}/giphy.gif" loading="lazy">
-                    </div>
-                `;
-            }
-        }
-
-        // --- STUDENT LIST RENDERER (Updated with Placeholder Avatar) ---
+        // --- STUDENT LIST RENDERER ---
         function loadStudents() {
             const list = document.getElementById('student-list');
             list.innerHTML = "";
@@ -665,7 +649,7 @@
         });
 
         window.onload = () => {
-            console.log("7B Class Website Updated Successfully");
+            console.log("7B Class Website Updated with Class Photo");
         };
     </script>
 </body>
