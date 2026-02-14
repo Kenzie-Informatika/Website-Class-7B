@@ -1,0 +1,681 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Website Class 7B</title>
+    
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-database.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <style>
+        /* =========================================
+           1. DESIGN SYSTEM & VARIABLES
+           ========================================= */
+        :root {
+            --bg-deep: #0f0c29;
+            --bg-gradient: linear-gradient(180deg, #120422 0%, #050a1b 100%);
+            --accent: #4facfe;
+            --accent-glow: rgba(79, 172, 254, 0.4);
+            --glass-light: rgba(255, 255, 255, 0.08);
+            --glass-medium: rgba(255, 255, 255, 0.12);
+            --glass-heavy: rgba(255, 255, 255, 0.2);
+            --white: #ffffff;
+            --wa-green: #25D366;
+            --wa-chat-bg: #0b141a;
+        }
+
+        /* Scrollbar Styling */
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-track { background: var(--bg-deep); }
+        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            background: var(--bg-gradient); 
+            color: var(--white); 
+            min-height: 100vh; 
+            overflow-x: hidden;
+            background-attachment: fixed;
+        }
+
+        /* =========================================
+           2. ANIMATIONS & PAGE MANAGEMENT
+           ========================================= */
+        .page { 
+            display: none; 
+            padding: 30px 20px; 
+            min-height: 100vh; 
+            animation: fadeIn 0.5s ease; 
+            padding-bottom: 140px; 
+        }
+        .page.active { display: block; }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* =========================================
+           3. HOME UI COMPONENTS
+           ========================================= */
+        .header-section { text-align: center; margin-bottom: 30px; padding-top: 20px; }
+        .header-section h1 { 
+            font-size: 2.5rem; 
+            font-weight: 800; 
+            letter-spacing: 2px; 
+            text-shadow: 0 0 20px var(--accent-glow);
+        }
+        .header-section p { font-size: 12px; opacity: 0.7; letter-spacing: 4px; text-transform: uppercase; }
+
+        .banner-box {
+            width: 100%; max-width: 450px; height: 220px; margin: 0 auto 35px;
+            border-radius: 35px; border: 1px solid var(--glass-light);
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
+                        url('https://images.unsplash.com/photo-1523050853064-850027f21623?auto=format&fit=crop&q=80') center/cover;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            box-shadow: 0 25px 50px rgba(0,0,0,0.6);
+            transition: 0.4s;
+        }
+        .banner-box:hover { transform: scale(1.02); border-color: var(--accent); }
+        .banner-box h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: 5px; }
+
+        /* Announcement Bar */
+        .news-ticker {
+            max-width: 450px; margin: 0 auto 25px;
+            background: var(--glass-light);
+            border-radius: 15px; padding: 10px 20px;
+            display: flex; align-items: center; gap: 15px;
+            border: 1px solid var(--glass-light);
+        }
+        .news-ticker i { color: var(--accent); }
+        .news-ticker marquee { font-size: 13px; font-weight: 500; }
+
+        /* Card Grid */
+        .menu-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            max-width: 450px; 
+            margin: 0 auto; 
+        }
+        .menu-card {
+            background: var(--glass-light); 
+            backdrop-filter: blur(25px);
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 30px;
+            padding: 35px 15px; 
+            cursor: pointer; 
+            transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: center;
+        }
+        .menu-card:active { transform: scale(0.9); }
+        .menu-card i { font-size: 35px; margin-bottom: 15px; display: block; color: var(--accent); }
+        .menu-card h4 { font-size: 15px; margin-bottom: 8px; font-weight: 700; }
+        .menu-card .hint { font-size: 10px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
+
+        /* =========================================
+           4. CHAT SYSTEM (WHATSAPP CLONE)
+           ========================================= */
+        .chat-container {
+            background: var(--wa-chat-bg); 
+            border-radius: 30px; 
+            height: 550px;
+            display: flex; 
+            flex-direction: column; 
+            border: 1px solid var(--glass-light); 
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .chat-header { 
+            background: #202c33; 
+            padding: 15px 20px; 
+            font-weight: 600; 
+            display: flex; 
+            align-items: center; 
+            gap: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+        .chat-header .status-dot {
+            width: 10px; height: 10px; background: var(--wa-green); border-radius: 50%;
+            box-shadow: 0 0 10px var(--wa-green);
+        }
+        
+        #chat-messages { 
+            flex: 1; 
+            padding: 20px; 
+            overflow-y: auto; 
+            display: flex; 
+            flex-direction: column; 
+            gap: 15px; 
+            background: url('https://user-images.githubusercontent.com/15075759/28719144-86dc0f70-73b1-11e7-911d-60d70fcded21.png');
+        }
+        
+        .msg-bubble { 
+            padding: 12px 16px; 
+            border-radius: 18px; 
+            max-width: 85%; 
+            font-size: 14px; 
+            line-height: 1.5; 
+            position: relative; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            animation: bubblePop 0.3s ease;
+        }
+        @keyframes bubblePop { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        .msg-other { 
+            background: #202c33; 
+            align-self: flex-start; 
+            border-bottom-left-radius: 5px; 
+            color: #e9edef;
+        }
+        .msg-me { 
+            background: #005c4b; 
+            align-self: flex-end; 
+            border-bottom-right-radius: 5px; 
+            color: #e9edef; 
+        }
+        .msg-time { font-size: 10px; opacity: 0.6; margin-top: 5px; display: block; text-align: right; }
+
+        .chat-input-bar { 
+            padding: 15px; 
+            background: #202c33; 
+            display: flex; 
+            gap: 12px; 
+            align-items: center;
+        }
+        #msgInput { 
+            flex: 1; 
+            background: #2a3942; 
+            border: none; 
+            padding: 14px 20px; 
+            border-radius: 30px; 
+            color: white; 
+            outline: none; 
+            font-size: 14px;
+        }
+        .btn-send { 
+            background: var(--wa-green); 
+            border: none; 
+            width: 50px; 
+            height: 50px; 
+            border-radius: 50%; 
+            color: #fff; 
+            cursor: pointer; 
+            transition: 0.3s;
+            display: flex; align-items: center; justify-content: center;
+        }
+        .btn-send:hover { transform: rotate(15deg) scale(1.1); }
+
+        /* =========================================
+           5. JADWAL & PIKET UI (ADVANCED)
+           ========================================= */
+        .tab-bar { 
+            display: flex; 
+            justify-content: center; 
+            gap: 15px; 
+            margin-bottom: 30px; 
+            background: var(--glass-light);
+            padding: 8px;
+            border-radius: 20px;
+            max-width: 300px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .tab-btn { 
+            background: none; 
+            border: none; 
+            color: rgba(255,255,255,0.5); 
+            font-size: 14px; 
+            font-weight: 700; 
+            cursor: pointer; 
+            padding: 10px 20px; 
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+        .tab-btn.active { 
+            background: var(--accent); 
+            color: #000; 
+            box-shadow: 0 5px 15px var(--accent-glow);
+        }
+
+        .schedule-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr; 
+            gap: 15px; 
+            max-width: 550px; 
+            margin: 0 auto; 
+        }
+        .day-card { 
+            background: var(--glass-light); 
+            border-radius: 25px; 
+            padding: 25px 15px; 
+            text-align: center; 
+            border: 1px solid var(--glass-light); 
+            transition: 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+        .day-card:hover { border-color: var(--accent); background: var(--glass-medium); }
+        .day-card h3 { 
+            font-size: 16px; 
+            margin-bottom: 15px; 
+            color: var(--accent); 
+            letter-spacing: 2px;
+            font-weight: 800;
+        }
+        .day-card p { 
+            font-size: 13px; 
+            margin-bottom: 6px; 
+            opacity: 0.9; 
+            background: rgba(255,255,255,0.05);
+            padding: 5px;
+            border-radius: 8px;
+        }
+        .day-card.wide { grid-column: 1 / span 2; width: 70%; margin: 0 auto; }
+
+        /* =========================================
+           6. CAT MEMES GALLERY (50+ SLOTS)
+           ========================================= */
+        .gallery-grid { 
+            display: grid; 
+            grid-template-columns: repeat(2, 1fr); 
+            gap: 12px; 
+            max-width: 600px;
+            margin: 0 auto;
+        }
+        .cat-card { 
+            background: #000; 
+            border-radius: 20px; 
+            overflow: hidden; 
+            border: 1px solid var(--glass-light); 
+            height: 180px;
+            transition: 0.3s;
+        }
+        .cat-card:hover { transform: translateY(-5px); border-color: var(--accent); }
+        .cat-card img, .cat-card video { width: 100%; height: 100%; object-fit: cover; cursor: pointer; }
+
+        /* =========================================
+           7. STUDENT LIST UI
+           ========================================= */
+        .student-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        .m-card { 
+            background: var(--glass-light); 
+            border-radius: 25px; 
+            padding: 25px 15px; 
+            text-align: center; 
+            border: 1px solid var(--glass-light);
+            transition: 0.3s;
+        }
+        .m-card:hover { transform: scale(1.05); background: var(--glass-medium); }
+        .m-card img { 
+            width: 80px; 
+            height: 80px; 
+            border-radius: 50%; 
+            border: 3px solid var(--accent); 
+            margin-bottom: 12px; 
+            padding: 3px;
+            background: #fff;
+        }
+        .m-card h4 { font-size: 14px; font-weight: 700; }
+        .m-card p { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; }
+
+        /* =========================================
+           8. NAVIGATION DOCK (MODERN)
+           ========================================= */
+        .bottom-nav {
+            position: fixed; 
+            bottom: 30px; 
+            left: 50%; 
+            transform: translateX(-50%);
+            background: rgba(15, 12, 41, 0.8); 
+            backdrop-filter: blur(30px);
+            padding: 15px 40px; 
+            border-radius: 60px; 
+            display: flex; 
+            gap: 45px;
+            border: 1px solid var(--glass-light); 
+            z-index: 9999;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
+        }
+        .nav-link { 
+            color: rgba(255,255,255,0.4); 
+            font-size: 11px; 
+            text-align: center; 
+            cursor: pointer; 
+            transition: 0.3s;
+            text-decoration: none;
+        }
+        .nav-link.active { color: var(--accent); transform: translateY(-5px); }
+        .nav-link i { font-size: 24px; display: block; margin-bottom: 4px; }
+        .nav-link span { font-weight: 600; }
+
+        /* Mobile Optimization */
+        @media (max-width: 400px) {
+            .bottom-nav { gap: 30px; padding: 12px 25px; }
+            .menu-grid { grid-template-columns: 1fr; }
+            .header-section h1 { font-size: 2rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <div id="home" class="page active">
+        <div class="header-section animate__animated animate__fadeInDown">
+            <h1>7B MATSANESCA</h1>
+            <p>Official Digital Space</p>
+        </div>
+
+        <div class="banner-box animate__animated animate__zoomIn">
+            <h2>7B CLASS</h2>
+            <p style="letter-spacing: 5px;">EST. 2024 - 2026</p>
+        </div>
+
+        <div class="news-ticker animate__animated animate__fadeInUp">
+            <i class="fas fa-bullhorn"></i>
+            <marquee>Info: Besok kumpul tugas Matematika! • Piket hari ini: Kelompok 3 • Website 7B sudah versi Ultra!</marquee>
+        </div>
+
+        <div class="menu-grid">
+            <div class="menu-card" onclick="window.open('https://instagram.com/class.7b.matsanesca')">
+                <i class="fab fa-instagram"></i>
+                <h4>Instagram</h4>
+                <div class="hint">Open Feed <i class="fas fa-external-link-alt"></i></div>
+            </div>
+            <div class="menu-card" onclick="showPage('members')">
+                <i class="fas fa-user-friends"></i>
+                <h4>Anggota</h4>
+                <div class="hint">32 Students <i class="fas fa-chevron-right"></i></div>
+            </div>
+            <div class="menu-card" onclick="window.open('https://tiktok.com/@class.7b.matsanesca')">
+                <i class="fab fa-tiktok"></i>
+                <h4>TikTok</h4>
+                <div class="hint">Watch Video <i class="fas fa-external-link-alt"></i></div>
+            </div>
+            <div class="menu-card" onclick="showPage('chat')">
+                <i class="fas fa-comment-dots"></i>
+                <h4>Public Chat</h4>
+                <div class="hint">Join Room <i class="fas fa-chevron-right"></i></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="chat" class="page">
+        <div class="header-section">
+            <h1>CHATS</h1>
+            <p>Pesan Anonim 7B</p>
+        </div>
+
+        <div class="chat-container">
+            <div class="chat-header">
+                <div class="status-dot"></div>
+                <div style="flex: 1">
+                    <div style="font-size: 15px; font-weight: 700;">7B Public Room</div>
+                    <div style="font-size: 11px; opacity: 0.6;">Online</div>
+                </div>
+                <i class="fas fa-ellipsis-v"></i>
+            </div>
+            
+            <div id="chat-messages">
+                </div>
+
+            <div class="chat-input-bar">
+                <i class="far fa-smile" style="font-size: 20px; color: #8696a0;"></i>
+                <input type="text" id="msgInput" placeholder="Ketik pesan anonim...">
+                <button class="btn-send" onclick="sendToFirebase()">
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="jadwal" class="page">
+        <div class="header-section">
+            <h1>JADWAL</h1>
+            <p>7B Weekly Schedule</p>
+        </div>
+
+        <div class="tab-bar">
+            <div class="tab-btn active" id="btn-pel" onclick="loadTab('pelajaran')">PELAJARAN</div>
+            <div class="tab-btn" id="btn-pik" onclick="loadTab('piket')">PIKET</div>
+        </div>
+
+        <div id="schedule-content" class="schedule-grid">
+            </div>
+    </div>
+
+    <div id="gallery" class="page">
+        <div class="header-section">
+            <h1>GALLERY</h1>
+            <p>Cat Memes & Moments</p>
+        </div>
+
+        <div class="gallery-grid" id="cat-gallery">
+            </div>
+    </div>
+
+    <div id="members" class="page">
+        <div class="header-section">
+            <h1>MEMBERS</h1>
+            <p>Daftar Siswa 7B</p>
+        </div>
+        <div id="student-list" class="student-container">
+            </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-link" id="n-gal" onclick="showPage('gallery')">
+            <i class="fas fa-th-large"></i>
+            <span>Gallery</span>
+        </div>
+        <div class="nav-link active" id="n-home" onclick="showPage('home')">
+            <i class="fas fa-home"></i>
+            <span>Home</span>
+        </div>
+        <div class="nav-link" id="n-jad" onclick="showPage('jadwal')">
+            <i class="fas fa-calendar-alt"></i>
+            <span>Jadwal</span>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================
+           9. CORE LOGIC & DATABASE
+           ========================================= */
+        
+        // --- FIREBASE CONFIGURATION ---
+        const firebaseConfig = {
+            apiKey: "ISI_API_KEY_KAMU",
+            databaseURL: "ISI_DATABASE_URL_KAMU",
+            projectId: "ISI_PROJECT_ID",
+            appId: "ISI_APP_ID"
+        };
+
+        // Initialize Firebase if config is present
+        if(firebaseConfig.apiKey !== "ISI_API_KEY_KAMU") {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const db = firebase.database();
+
+        // --- PAGE SYSTEM ---
+        function showPage(id) {
+            // Hide all pages
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            // Remove active from nav
+            document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+            
+            // Show target
+            const targetPage = document.getElementById(id);
+            targetPage.classList.add('active');
+            window.scrollTo(0,0);
+            
+            // Set nav active
+            if(id === 'home') document.getElementById('n-home').classList.add('active');
+            if(id === 'gallery') {
+                document.getElementById('n-gal').classList.add('active');
+                renderGallery();
+            }
+            if(id === 'jadwal') {
+                document.getElementById('n-jad').classList.add('active');
+                loadTab('pelajaran');
+            }
+            if(id === 'members') loadStudents();
+        }
+
+        // --- CHAT SYSTEM ---
+        function sendToFirebase() {
+            const input = document.getElementById('msgInput');
+            const msgText = input.value.trim();
+            
+            if(msgText !== "") {
+                const randomId = 'User_' + Math.floor(Math.random() * 999);
+                db.ref('anonChat').push({
+                    sender: randomId,
+                    msg: msgText,
+                    timestamp: Date.now(),
+                    time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+                });
+                input.value = "";
+                
+                // Play sound effect (optional)
+                const audio = new Audio('https://www.soundjay.com/buttons/button-4.mp3');
+                audio.volume = 0.2;
+                audio.play();
+            }
+        }
+
+        // Realtime Listener for Chats
+        db.ref('anonChat').limitToLast(30).on('value', snap => {
+            const box = document.getElementById('chat-messages');
+            box.innerHTML = "";
+            
+            if(!snap.exists()) {
+                box.innerHTML = "<p style='text-align:center; opacity:0.5; margin-top:20px;'>Belum ada pesan. Mulai obrolan!</p>";
+                return;
+            }
+
+            snap.forEach(child => {
+                const data = child.val();
+                const isMe = data.sender.includes('User_'); // Simplified check
+                
+                const bubble = `
+                    <div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
+                        <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">
+                            ${data.sender}
+                        </div>
+                        ${data.msg}
+                        <span class="msg-time">${data.time}</span>
+                    </div>
+                `;
+                box.innerHTML += bubble;
+            });
+            box.scrollTop = box.scrollHeight;
+        });
+
+        // --- SCHEDULE DATA ---
+        const schData = {
+            pelajaran: {
+                "SENIN": ["IPA (Sains)", "Matematika", "B. Indonesia", "PABP", "Olahraga"],
+                "SELASA": ["IPS", "B. Inggris", "Informatika", "Seni Budaya", "PKN"],
+                "RABU": ["Matematika", "IPA (Sains)", "B. Indonesia", "B. Arab", "Seni Musik"],
+                "KAMIS": ["B. Inggris", "IPS", "PABP (Agama)", "PKN", "TIK"],
+                "JUMAT": ["B. Sunda", "Prakarya", "Matematika", "B. Indonesia", "Literasi"]
+            },
+            piket: {
+                "SENIN": ["Kenzie", "Ahmad", "Siti", "Budi", "Dewi"],
+                "SELASA": ["Fajar", "Gita", "Hendra", "Indah", "Joko"],
+                "RABU": ["Lilis", "Maman", "Novi", "Oki", "Putri"],
+                "KAMIS": ["Rian", "Siska", "Taufik", "Umar", "Vina"],
+                "JUMAT": ["Wawan", "Xena", "Yanto", "Zelda", "Agus"]
+            }
+        };
+
+        function loadTab(type) {
+            const content = document.getElementById('schedule-content');
+            document.getElementById('btn-pel').classList.toggle('active', type === 'pelajaran');
+            document.getElementById('btn-pik').classList.toggle('active', type === 'piket');
+            
+            content.innerHTML = "";
+            const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
+            
+            days.forEach(day => {
+                const isFri = day === "JUMAT";
+                let items = schData[type][day].map(s => `<p><i class="fas fa-check-circle" style="font-size:10px; color:var(--accent); margin-right:8px;"></i>${s}</p>`).join('');
+                
+                content.innerHTML += `
+                    <div class="day-card ${isFri ? 'wide' : ''} animate__animated animate__fadeIn">
+                        <h3><i class="far fa-calendar-check"></i> ${day}</h3>
+                        ${items}
+                    </div>
+                `;
+            });
+        }
+
+        // --- GALLERY RENDERER (50 CAT MEMES) ---
+        function renderGallery() {
+            const gal = document.getElementById('cat-gallery');
+            gal.innerHTML = "";
+            
+            const catUrls = [
+                "3v1Sz0oTKRsDK", "mlvseq9nOeZh6", "jpbnoe3UIa8TUBSziz", "CjmvTCZf2U3p09Cn0h",
+                "vfkSe0aqJpceSgnT7f", "26xfid7", "3oriO5t2YwLaGiYp3y", "VbnUQpnihPSIg",
+                "v6aO3MZfVnOb6", "11mN86N3SIdlSM", "H4qzWUt1NTYI0", "o0uvO746VgCpa",
+                "6Vo66vEicXfoc", "L7XpYvYtBqQxy", "JIX9t2j0ZTN9S", "n4lHZS3C0z680"
+            ];
+
+            // Loop to create 50 items
+            for(let i = 0; i < 50; i++) {
+                const gifId = catUrls[i % catUrls.length];
+                gal.innerHTML += `
+                    <div class="cat-card animate__animated animate__fadeInUp">
+                        <img src="https://media.giphy.com/media/${gifId}/giphy.gif" loading="lazy">
+                    </div>
+                `;
+            }
+        }
+
+        // --- STUDENT LIST RENDERER ---
+        function loadStudents() {
+            const list = document.getElementById('student-list');
+            list.innerHTML = "";
+            
+            // Fake data for demo, link with Firebase 'anggota' for real
+            const students = ["Kenzie", "Ahmad", "Siti", "Budi", "Dewi", "Fajar", "Gita", "Hendra", "Indah", "Joko", "Lilis", "Maman", "Novi", "Oki", "Putri"];
+            
+            students.forEach((name, index) => {
+                list.innerHTML += `
+                    <div class="m-card animate__animated animate__fadeInUp">
+                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${name}" alt="avatar">
+                        <h4>${name}</h4>
+                        <p>${index === 0 ? 'Ketua Kelas' : 'Siswa 7B'}</p>
+                    </div>
+                `;
+            });
+        }
+
+        // Listen for Enter Key in Chat
+        document.getElementById('msgInput').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') {
+                sendToFirebase();
+            }
+        });
+
+        // Initialize Home
+        window.onload = () => {
+            console.log("7B Matsanesca Website Loaded Successfully");
+        };
+    </script>
+</body>
+</html>
