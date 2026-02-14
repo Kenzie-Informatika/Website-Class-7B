@@ -248,8 +248,8 @@
         .schedule-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-            max-width: 550px; 
+            gap: 20px; 
+            max-width: 800px; 
             margin: 0 auto; 
         }
         .day-card { 
@@ -262,43 +262,66 @@
             position: relative;
             overflow: hidden;
         }
-        .day-card:hover { border-color: var(--accent); background: var(--glass-medium); }
+        .day-card:hover { border-color: var(--accent); background: var(--glass-medium); transform: translateY(-5px); }
         .day-card h3 { 
-            font-size: 16px; 
-            margin-bottom: 15px; 
+            font-size: 18px; 
+            margin-bottom: 20px; 
             color: var(--accent); 
             letter-spacing: 2px;
             font-weight: 800;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+        
+        /* Item Mata Pelajaran Berjajar */
+        .subject-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
         .subject-item {
             display: flex;
-            flex-direction: column;
             align-items: center;
-            margin-bottom: 12px;
             background: rgba(255,255,255,0.05);
-            padding: 10px;
+            padding: 10px 15px;
             border-radius: 15px;
+            text-align: left;
             transition: 0.2s;
         }
+        .subject-item:hover { background: rgba(255,255,255,0.1); }
         .subject-item i {
-            font-size: 20px;
-            color: var(--accent);
-            margin-bottom: 5px;
+            width: 35px;
+            height: 35px;
+            background: var(--accent);
+            color: #000;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-size: 16px;
         }
-        .subject-item span {
-            font-size: 12px;
-            font-weight: 500;
-            opacity: 0.9;
+        .subject-info {
+            display: flex;
+            flex-direction: column;
         }
-        .day-card.wide { grid-column: 1 / span 2; width: 100%; max-width: 550px; }
-        .wide .subject-list-flex {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 10px;
+        .subject-name {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+        }
+        .subject-desc {
+            font-size: 10px;
+            opacity: 0.6;
+            text-transform: uppercase;
+        }
+
+        @media (max-width: 600px) {
+            .schedule-grid { grid-template-columns: 1fr; }
         }
 
         /* =========================================
-           6. GALLERY
+           6. GALLERY (UPDATED: CLASS PHOTO ONLY)
            ========================================= */
         .gallery-grid { 
             display: block; 
@@ -384,6 +407,7 @@
         .nav-link i { font-size: 24px; display: block; margin-bottom: 4px; }
         .nav-link span { font-weight: 600; }
 
+        /* Mobile Optimization */
         @media (max-width: 400px) {
             .bottom-nav { gap: 30px; padding: 12px 25px; }
             .menu-grid { grid-template-columns: 1fr; }
@@ -464,7 +488,7 @@
     <div id="jadwal" class="page">
         <div class="header-section">
             <h1>JADWAL</h1>
-            <p>7B Weekly Schedule</p>
+            <p>7B Weekly Schedule (Revisi 2)</p>
         </div>
 
         <div class="tab-bar">
@@ -516,15 +540,15 @@
            9. CORE LOGIC & DATABASE
            ========================================= */
         
-      const firebaseConfig = {
-        apiKey: "AIzaSyBPDhm0H0aA2M1z1Ex5JuPW94uyY0WyQ3Y",
-        authDomain: "class-7b.firebaseapp.com",
-        projectId: "class-7b",
-        storageBucket: "class-7b.firebasestorage.app",
-        messagingSenderId: "1022938564386",
-        appId: "1:1022938564386:web:7451da341d44903e48877b",
-        measurementId: "G-M0CP4D7573"
-        };
+          const firebaseConfig = {
+            apiKey: "AIzaSyBPDhm0H0aA2M1z1Ex5JuPW94uyY0WyQ3Y",
+            authDomain: "class-7b.firebaseapp.com",
+            projectId: "class-7b",
+            storageBucket: "class-7b.firebasestorage.app",
+            messagingSenderId: "1022938564386",
+            appId: "1:1022938564386:web:7451da341d44903e48877b",
+            measurementId: "G-M0CP4D7573"
+           };
 
         const myLocalId = 'User_' + Math.floor(Math.random() * 9999);
 
@@ -533,6 +557,7 @@
         }
         const db = firebase.database();
 
+        // --- PAGE SYSTEM ---
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -542,7 +567,9 @@
             window.scrollTo(0,0);
             
             if(id === 'home') document.getElementById('n-home').classList.add('active');
-            if(id === 'gallery') document.getElementById('n-gal').classList.add('active');
+            if(id === 'gallery') {
+                document.getElementById('n-gal').classList.add('active');
+            }
             if(id === 'jadwal') {
                 document.getElementById('n-jad').classList.add('active');
                 loadTab('pelajaran');
@@ -550,9 +577,11 @@
             if(id === 'members') loadStudents();
         }
 
+        // --- CHAT SYSTEM ---
         function sendToFirebase() {
             const input = document.getElementById('msgInput');
             const msgText = input.value.trim();
+            
             if(msgText !== "") {
                 db.ref('anonChat').push({
                     sender: myLocalId,
@@ -561,96 +590,116 @@
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 });
                 input.value = "";
+                
+                const audio = new Audio('https://www.soundjay.com/buttons/button-4.mp3');
+                audio.volume = 0.2;
+                audio.play();
             }
         }
 
         db.ref('anonChat').limitToLast(50).on('value', snap => {
             const box = document.getElementById('chat-messages');
             box.innerHTML = "";
+            
             if(!snap.exists()) {
                 box.innerHTML = "<p style='text-align:center; opacity:0.5; margin-top:20px;'>Belum ada pesan. Mulai obrolan!</p>";
                 return;
             }
+
             snap.forEach(child => {
                 const data = child.val();
                 const isMe = (data.sender === myLocalId); 
-                const bubble = `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
-                    <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">${isMe ? "Anda" : data.sender}</div>
-                    ${data.msg}<span class="msg-time">${data.time}</span></div>`;
+                
+                const bubble = `
+                    <div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
+                        <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">
+                            ${isMe ? "Anda" : data.sender}
+                        </div>
+                        ${data.msg}
+                        <span class="msg-time">${data.time}</span>
+                    </div>
+                `;
                 box.innerHTML += bubble;
             });
             box.scrollTop = box.scrollHeight;
         });
 
-        // --- UPDATED SCHEDULE DATA WITH ICONS ---
+        // --- UPDATED SCHEDULE DATA FROM IMAGE ---
+        // Format: [Nama Mapel, Icon, Deskripsi]
         const schData = {
             pelajaran: {
                 "SENIN": [
-                    { name: "IPA", icon: "fas fa-microscope" },
-                    { name: "Matematika", icon: "fas fa-calculator" },
-                    { name: "B. Indonesia", icon: "fas fa-book" },
-                    { name: "PABP", icon: "fas fa-mosque" },
-                    { name: "Olahraga", icon: "fas fa-running" }
+                    ["B. INDONESIA", "fa-book", "Wajib"],
+                    ["SENI BUDAYA", "fa-palette", "Kesenian"],
+                    ["B. JAWA", "fa-language", "Muatan Lokal"]
                 ],
                 "SELASA": [
-                    { name: "IPS", icon: "fas fa-globe-asia" },
-                    { name: "B. Inggris", icon: "fas fa-language" },
-                    { name: "Informatika", icon: "fas fa-laptop-code" },
-                    { name: "Seni Budaya", icon: "fas fa-palette" },
-                    { name: "PKN", icon: "fas fa-shield-alt" }
+                    ["PENJAS", "fa-running", "Olahraga"],
+                    ["FIQIH", "fa-mosque", "Agama"],
+                    ["IPS", "fa-globe-asia", "Sosial"],
+                    ["SKI", "fa-history", "Sejarah Islam"]
                 ],
                 "RABU": [
-                    { name: "Matematika", icon: "fas fa-calculator" },
-                    { name: "IPA", icon: "fas fa-flask" },
-                    { name: "B. Indonesia", icon: "fas fa-book-open" },
-                    { name: "B. Arab", icon: "fas fa-star-and-crescent" },
-                    { name: "Seni Musik", icon: "fas fa-music" }
+                    ["INFORMATIKA", "fa-laptop-code", "Teknologi"],
+                    ["MTK", "fa-calculator", "Numerik"],
+                    ["B. INDONESIA", "fa-book", "Wajib"],
+                    ["B. INGGRIS", "fa-atlas", "Bahasa"]
                 ],
                 "KAMIS": [
-                    { name: "B. Inggris", icon: "fas fa-atlas" },
-                    { name: "IPS", icon: "fas fa-map-marked-alt" },
-                    { name: "PABP", icon: "fas fa-pray" },
-                    { name: "PKN", icon: "fas fa-balance-scale" },
-                    { name: "TIK", icon: "fas fa-desktop" }
+                    ["B. ARAB", "fa-book-quran", "Agama"],
+                    ["IPA", "fa-flask", "Sains"],
+                    ["B. INGGRIS", "fa-atlas", "Bahasa"],
+                    ["IPS", "fa-globe-asia", "Sosial"]
                 ],
                 "JUMAT": [
-                    { name: "B. Sunda", icon: "fas fa-scroll" },
-                    { name: "Prakarya", icon: "fas fa-hammer" },
-                    { name: "Matematika", icon: "fas fa-square-root-alt" },
-                    { name: "B. Indonesia", icon: "fas fa-feather" },
-                    { name: "Literasi", icon: "fas fa-book-reader" }
+                    ["AKIDAH", "fa-heart", "Agama"],
+                    ["PKN", "fa-shield-halved", "Pancasila"]
+                ],
+                "SABTU": [
+                    ["QURAN HADIS", "fa-quran", "Agama"],
+                    ["MTK", "fa-calculator", "Numerik"],
+                    ["IPA", "fa-flask", "Sains"]
                 ]
             }
         };
 
         function loadTab(type) {
             const content = document.getElementById('schedule-content');
+            document.getElementById('btn-pel').classList.toggle('active', type === 'pelajaran');
+            
             content.innerHTML = "";
-            const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
+            const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
             
             days.forEach(day => {
-                const isFri = day === "JUMAT";
-                let itemsHtml = schData[type][day].map(item => `
-                    <div class="subject-item">
-                        <i class="${item.icon}"></i>
-                        <span>${item.name}</span>
-                    </div>
-                `).join('');
+                let subjectsHTML = "";
+                schData[type][day].forEach(item => {
+                    subjectsHTML += `
+                        <div class="subject-item animate__animated animate__fadeIn">
+                            <i class="fas ${item[1]}"></i>
+                            <div class="subject-info">
+                                <span class="subject-name">${item[0]}</span>
+                                <span class="subject-desc">${item[2]}</span>
+                            </div>
+                        </div>
+                    `;
+                });
                 
                 content.innerHTML += `
-                    <div class="day-card ${isFri ? 'wide' : ''} animate__animated animate__fadeIn">
-                        <h3>${day}</h3>
-                        <div class="subject-list-flex">
-                            ${itemsHtml}
+                    <div class="day-card animate__animated animate__fadeInUp">
+                        <h3><i class="far fa-calendar-check"></i> ${day}</h3>
+                        <div class="subject-list">
+                            ${subjectsHTML}
                         </div>
                     </div>
                 `;
             });
         }
 
+        // --- STUDENT LIST RENDERER ---
         function loadStudents() {
             const list = document.getElementById('student-list');
             list.innerHTML = "";
+            
             const students = [
                 "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", 
                 "AQSHAL ILHAM SYAFATULLAH", "AZAID IBNU FAHDI", "BHEKTI BAHTIAR", "DADI PANGESTU", 
@@ -662,16 +711,27 @@
                 "NISA AULIA ANGGRAENI", "RADITYA FAJRI SYAHDAN N.", "RAFKA KHANNAFI", "SOHEBUL AKMAL", 
                 "SUCI NURLAELA KELUD PUTRI", "ZAM ZAM AL BILAL RAMDAN",
             ];
-            students.forEach((name) => {
-                list.innerHTML += `<div class="m-card animate__animated animate__fadeInUp">
-                    <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="avatar">
-                    <h4>${name}</h4><p>Siswa 7B</p></div>`;
+
+            students.forEach((name, index) => {
+                list.innerHTML += `
+                    <div class="m-card animate__animated animate__fadeInUp">
+                        <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="avatar">
+                        <h4>${name}</h4>
+                        <p>Siswa 7B</p>
+                    </div>
+                `;
             });
         }
 
         document.getElementById('msgInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') sendToFirebase();
+            if (e.key === 'Enter') {
+                sendToFirebase();
+            }
         });
+
+        window.onload = () => {
+            console.log("7B Class Website Updated with New Schedule Data");
+        };
     </script>
 </body>
 </html>
