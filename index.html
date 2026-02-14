@@ -397,7 +397,7 @@
             <div class="menu-card" onclick="showPage('members')">
                 <i class="fas fa-user-friends"></i>
                 <h4>Anggota</h4>
-                <div class="hint">31 Students <i class="fas fa-chevron-right"></i></div>
+                <div class="hint">34 Students <i class="fas fa-chevron-right"></i></div>
             </div>
             <div class="menu-card" onclick="window.open('https://tiktok.com/@class.7b.matsanesca')">
                 <i class="fab fa-tiktok"></i>
@@ -594,11 +594,11 @@
                 "JUMAT": ["B. Sunda", "Prakarya", "Matematika", "B. Indonesia", "Literasi"]
             },
             piket: {
-                "SENIN": ["Kenzie", "Ahmad", "Siti", "Budi", "Dewi"],
-                "SELASA": ["Fajar", "Gita", "Hendra", "Indah", "Joko"],
-                "RABU": ["Lilis", "Maman", "Novi", "Oki", "Putri"],
-                "KAMIS": ["Rian", "Siska", "Taufik", "Umar", "Vina"],
-                "JUMAT": ["Wawan", "Xena", "Yanto", "Zelda", "Agus"]
+                "SENIN": ["AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "AQSHAL ILHAM S.", "AZAID IBNU FAHDI"],
+                "SELASA": ["BHEKTI BAHTIAR", "DADI PANGESTU", "DAFFA AL FATTAH H.", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA"],
+                "RABU": ["FAHREZA OKTA N.", "FAIZAH MAYA A.", "FATHAN KAISYA K.", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA"],
+                "KAMIS": ["INTAN NUR RAMADHANI", "KANAYA ANUGRAH A.", "KANAYA BIANCA A.", "KENI RIZKI ANINDIA", "KEYSA FEBRIANTI"],
+                "JUMAT": ["KHOLIF ADIL MUBAROK", "LULU WULAN", "MICHAELA ADELIA A.", "M. ZAHEL ALFAHMI", "MUFID AKBAR MAULANA"]
             }
         };
 
@@ -651,9 +651,19 @@
             const list = document.getElementById('student-list');
             list.innerHTML = "";
             
-            // Fake data for demo, link with Firebase 'anggota' for real
-            const students = ["Kenzie", "Ahmad", "Siti", "Budi", "Dewi", "Fajar", "Gita", "Hendra", "Indah", "Joko", "Lilis", "Maman", "Novi", "Oki", "Putri"];
-            
+            // Updated names based on your document
+            const students = [
+                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "ANISA SYAHPUTRI", 
+                "AQSHAL ILHAM SYAFATULLAH", "AZAID IBNU FAHDI", "BHEKTI BAHTIAR", "DADI PANGESTU", 
+                "DAFFA AL FATTAH HUSAINI", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA", "FAHREZA OKTA NURFAUZI", 
+                "FAIZAH MAYA APRLILIYANI", "FATHAN KAISYA KHOIRULLOH", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA", 
+                "INTAN NUR RAMADHANI", "KANAYA ANUGRAH ALFINO", "KANAYA BIANCA ALMAHYRA", "KENI RIZKI ANINDIA", 
+                "KEYSA FEBRIANTI", "KHOLIF ADIL MUBAROK", "LULU WULAN", "MICHAELA ADELIA APRILIANI", 
+                "MOHAMMAD ZAHEL ALFAHMI", "MUFID AKBAR MAULANA", "NAJWA HABIBAH", "NAZWA REI AMALINA W.", 
+                "NISA AULIA ANGGRAENI", "RADITYA FAJRI SYAHDAN N.", "RAFKA KHANNAFI", "SOHEBUL AKMAL", 
+                "SUCI NURLAELA KELUD PUTRI", "ZAM ZAM AL BILAL RAMDAN"
+            ];
+
             students.forEach((name, index) => {
                 list.innerHTML += `
                     <div class="m-card animate__animated animate__fadeInUp">
