@@ -28,7 +28,6 @@
             --wa-chat-bg: #0b141a;
         }
 
-        /* Scrollbar Styling */
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-track { background: var(--bg-deep); }
         ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
@@ -72,20 +71,24 @@
         }
         .header-section p { font-size: 12px; opacity: 0.7; letter-spacing: 4px; text-transform: uppercase; }
 
+        /* UPDATE: Perbaikan Banner Home agar kotak dan foto pas */
         .banner-box {
             width: 100%; max-width: 450px; height: 220px; margin: 0 auto 35px;
             border-radius: 35px; border: 1px solid var(--glass-light);
             background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), 
-                        url('https://files.catbox.moe/qolu2r.jpeg') center/cover;
-                        <img src="https://files.catbox.moe/qolu2r.jpeg">
+                        url('https://files.catbox.moe/qolu2r.jpeg');
+            background-position: center;
+            background-size: cover;
+            background-repeat: no-repeat;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
             box-shadow: 0 25px 50px rgba(0,0,0,0.6);
             transition: 0.4s;
+            overflow: hidden;
         }
         .banner-box:hover { transform: scale(1.02); border-color: var(--accent); }
-        .banner-box h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: 5px; }
+        .banner-box h2 { font-size: 2.2rem; font-weight: 800; letter-spacing: 5px; position: relative; z-index: 2; }
+        .banner-box p { position: relative; z-index: 2; }
 
-        /* Announcement Bar */
         .news-ticker {
             max-width: 450px; margin: 0 auto 25px;
             background: var(--glass-light);
@@ -96,7 +99,6 @@
         .news-ticker i { color: var(--accent); }
         .news-ticker marquee { font-size: 13px; font-weight: 500; }
 
-        /* Card Grid */
         .menu-grid { 
             display: grid; 
             grid-template-columns: 1fr 1fr; 
@@ -120,7 +122,7 @@
         .menu-card .hint { font-size: 10px; color: var(--accent); font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
 
         /* =========================================
-           4. CHAT SYSTEM (WHATSAPP CLONE)
+           4. CHAT SYSTEM
            ========================================= */
         .chat-container {
             background: var(--wa-chat-bg); 
@@ -215,7 +217,7 @@
         .btn-send:hover { transform: rotate(15deg) scale(1.1); }
 
         /* =========================================
-           5. JADWAL & PIKET UI (ADVANCED)
+           5. JADWAL UI
            ========================================= */
         .tab-bar { 
             display: flex; 
@@ -274,7 +276,6 @@
             padding-bottom: 10px;
         }
         
-        /* Item Mata Pelajaran Berjajar */
         .subject-list {
             display: flex;
             flex-direction: column;
@@ -322,11 +323,11 @@
         }
 
         /* =========================================
-           6. GALLERY (UPDATED: CLASS PHOTO ONLY)
+           6. GALLERY (UPDATE: Foto Kotak & Kecil)
            ========================================= */
         .gallery-grid { 
             display: block; 
-            max-width: 600px;
+            max-width: 500px;
             margin: 0 auto;
         }
         .class-photo-card { 
@@ -337,7 +338,14 @@
             transition: 0.3s;
             box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        .class-photo-card img { width: 100%; height: auto; display: block; }
+        /* Update ukuran foto gallery agar rapi */
+        .class-photo-card img { 
+            width: 100%; 
+            height: 250px; 
+            display: block; 
+            object-fit: cover; 
+            object-position: center;
+        }
         .class-photo-card .photo-info {
             padding: 15px;
             text-align: center;
@@ -379,7 +387,7 @@
         .m-card p { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; }
 
         /* =========================================
-           8. NAVIGATION DOCK (MODERN)
+           8. NAVIGATION DOCK
            ========================================= */
         .bottom-nav {
             position: fixed; 
@@ -408,7 +416,6 @@
         .nav-link i { font-size: 24px; display: block; margin-bottom: 4px; }
         .nav-link span { font-weight: 600; }
 
-        /* Mobile Optimization */
         @media (max-width: 400px) {
             .bottom-nav { gap: 30px; padding: 12px 25px; }
             .menu-grid { grid-template-columns: 1fr; }
@@ -431,7 +438,7 @@
 
         <div class="news-ticker animate__animated animate__fadeInUp">
             <i class="fas fa-bullhorn"></i>
-            <marquee>Info: WELLCOME!! to Website Class 7B</marquee>
+            <marquee>Info: WELCOME!! to Website Class 7B</marquee>
         </div>
 
         <div class="menu-grid">
@@ -489,11 +496,11 @@
     <div id="jadwal" class="page">
         <div class="header-section">
             <h1>JADWAL</h1>
-            <p>7B Weekly Schedule (Revisi 2)</p>
+            <p>7B Weekly Schedule</p>
         </div>
 
         <div class="tab-bar">
-            <div class="tab-btn active" id="btn-pel" onclick="loadTab('pelajaran')">PELAJARAN</div>
+            <div class="tab-btn active" id="btn-pel">PELAJARAN</div>
         </div>
 
         <div id="schedule-content" class="schedule-grid"></div>
@@ -506,7 +513,7 @@
         </div>
 
         <div class="gallery-grid">
-            <div class="https://files.catbox.moe/qolu2r.jpeg">
+            <div class="class-photo-card">
                 <img src="https://files.catbox.moe/qolu2r.jpeg" alt="Foto Kelas 7B">
                 <div class="photo-info">Foto Bersama 7B MTs Negeri 1 Cilacap</div>
             </div>
@@ -537,11 +544,7 @@
     </div>
 
     <script>
-        /* =========================================
-           9. CORE LOGIC & DATABASE
-           ========================================= */
-        
-          const firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyBPDhm0H0aA2M1z1Ex5JuPW94uyY0WyQ3Y",
             authDomain: "class-7b.firebaseapp.com",
             projectId: "class-7b",
@@ -549,16 +552,12 @@
             messagingSenderId: "1022938564386",
             appId: "1:1022938564386:web:7451da341d44903e48877b",
             measurementId: "G-M0CP4D7573"
-           };
+        };
 
         const myLocalId = 'User_' + Math.floor(Math.random() * 9999);
-
-        if(firebaseConfig.apiKey !== "ISI_API_KEY_KAMU") {
-            firebase.initializeApp(firebaseConfig);
-        }
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.database();
 
-        // --- PAGE SYSTEM ---
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -568,9 +567,7 @@
             window.scrollTo(0,0);
             
             if(id === 'home') document.getElementById('n-home').classList.add('active');
-            if(id === 'gallery') {
-                document.getElementById('n-gal').classList.add('active');
-            }
+            if(id === 'gallery') document.getElementById('n-gal').classList.add('active');
             if(id === 'jadwal') {
                 document.getElementById('n-jad').classList.add('active');
                 loadTab('pelajaran');
@@ -578,11 +575,9 @@
             if(id === 'members') loadStudents();
         }
 
-        // --- CHAT SYSTEM ---
         function sendToFirebase() {
             const input = document.getElementById('msgInput');
             const msgText = input.value.trim();
-            
             if(msgText !== "") {
                 db.ref('anonChat').push({
                     sender: myLocalId,
@@ -591,26 +586,15 @@
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 });
                 input.value = "";
-                
-                const audio = new Audio('https://www.soundjay.com/buttons/button-4.mp3');
-                audio.volume = 0.2;
-                audio.play();
             }
         }
 
         db.ref('anonChat').limitToLast(50).on('value', snap => {
             const box = document.getElementById('chat-messages');
             box.innerHTML = "";
-            
-            if(!snap.exists()) {
-                box.innerHTML = "<p style='text-align:center; opacity:0.5; margin-top:20px;'>Belum ada pesan. Mulai obrolan!</p>";
-                return;
-            }
-
             snap.forEach(child => {
                 const data = child.val();
                 const isMe = (data.sender === myLocalId); 
-                
                 const bubble = `
                     <div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
                         <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">
@@ -618,60 +602,27 @@
                         </div>
                         ${data.msg}
                         <span class="msg-time">${data.time}</span>
-                    </div>
-                `;
+                    </div>`;
                 box.innerHTML += bubble;
             });
             box.scrollTop = box.scrollHeight;
         });
 
-        // --- UPDATED SCHEDULE DATA FROM IMAGE ---
-        // Format: [Nama Mapel, Icon, Deskripsi]
         const schData = {
             pelajaran: {
-                "SENIN": [
-                    ["B. INDONESIA", "fa-book", "Wajib"],
-                    ["SENI BUDAYA", "fa-palette", "Kesenian"],
-                    ["B. JAWA", "fa-language", "Muatan Lokal"]
-                ],
-                "SELASA": [
-                    ["PENJAS", "fa-running", "Olahraga"],
-                    ["FIQIH", "fa-mosque", "Agama"],
-                    ["IPS", "fa-globe-asia", "Sosial"],
-                    ["SKI", "fa-history", "Sejarah Islam"]
-                ],
-                "RABU": [
-                    ["INFORMATIKA", "fa-laptop-code", "Teknologi"],
-                    ["MTK", "fa-calculator", "Numerik"],
-                    ["B. INDONESIA", "fa-book", "Wajib"],
-                    ["B. INGGRIS", "fa-atlas", "Bahasa"]
-                ],
-                "KAMIS": [
-                    ["B. ARAB", "fa-book-quran", "Agama"],
-                    ["IPA", "fa-flask", "Sains"],
-                    ["B. INGGRIS", "fa-atlas", "Bahasa"],
-                    ["IPS", "fa-globe-asia", "Sosial"]
-                ],
-                "JUMAT": [
-                    ["AKIDAH", "fa-heart", "Agama"],
-                    ["PKN", "fa-shield-halved", "Pancasila"]
-                ],
-                "SABTU": [
-                    ["QURAN HADIS", "fa-quran", "Agama"],
-                    ["MTK", "fa-calculator", "Numerik"],
-                    ["IPA", "fa-flask", "Sains"]
-                ]
+                "SENIN": [["B. INDONESIA", "fa-book", "Wajib"], ["SENI BUDAYA", "fa-palette", "Kesenian"], ["B. JAWA", "fa-language", "Muatan Lokal"]],
+                "SELASA": [["PENJAS", "fa-running", "Olahraga"], ["FIQIH", "fa-mosque", "Agama"], ["IPS", "fa-globe-asia", "Sosial"], ["SKI", "fa-history", "Sejarah Islam"]],
+                "RABU": [["INFORMATIKA", "fa-laptop-code", "Teknologi"], ["MTK", "fa-calculator", "Numerik"], ["B. INDONESIA", "fa-book", "Wajib"], ["B. INGGRIS", "fa-atlas", "Bahasa"]],
+                "KAMIS": [["B. ARAB", "fa-book-quran", "Agama"], ["IPA", "fa-flask", "Sains"], ["B. INGGRIS", "fa-atlas", "Bahasa"], ["IPS", "fa-globe-asia", "Sosial"]],
+                "JUMAT": [["AKIDAH", "fa-heart", "Agama"], ["PKN", "fa-shield-halved", "Pancasila"]],
+                "SABTU": [["QURAN HADIS", "fa-quran", "Agama"], ["MTK", "fa-calculator", "Numerik"], ["IPA", "fa-flask", "Sains"]]
             }
         };
 
         function loadTab(type) {
             const content = document.getElementById('schedule-content');
-            document.getElementById('btn-pel').classList.toggle('active', type === 'pelajaran');
-            
             content.innerHTML = "";
-            const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
-            
-            days.forEach(day => {
+            ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"].forEach(day => {
                 let subjectsHTML = "";
                 schData[type][day].forEach(item => {
                     subjectsHTML += `
@@ -681,58 +632,33 @@
                                 <span class="subject-name">${item[0]}</span>
                                 <span class="subject-desc">${item[2]}</span>
                             </div>
-                        </div>
-                    `;
+                        </div>`;
                 });
-                
                 content.innerHTML += `
                     <div class="day-card animate__animated animate__fadeInUp">
                         <h3><i class="far fa-calendar-check"></i> ${day}</h3>
-                        <div class="subject-list">
-                            ${subjectsHTML}
-                        </div>
-                    </div>
-                `;
+                        <div class="subject-list">${subjectsHTML}</div>
+                    </div>`;
             });
         }
 
-        // --- STUDENT LIST RENDERER ---
         function loadStudents() {
             const list = document.getElementById('student-list');
             list.innerHTML = "";
-            
-            const students = [
-                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", 
-                "AQSHAL ILHAM SYAFATULLAH", "AZAID IBNU FAHDI", "BHEKTI BAHTIAR", "DADI PANGESTU", 
-                "DAFFA AL FATTAH HUSAINI", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA", "FAHREZA OKTA NURFAUZI", 
-                "FAIZAH MAYA APRLILIYANI", "FATHAN KAISYA KHOIRULLOH", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA", 
-                "INTAN NUR RAMADHANI", "KANAYA ANUGRAH ALFINO", "KANAYA BIANCA ALMAHYRA", "KENI RIZKI ANINDIA", 
-                "KEYSA FEBRIANTI", "KHOLIF ADIL MUBAROK", "LULU WULAN", "MICHAELA ADELIA APRILIANI", 
-                "MOHAMMAD ZAHEL ALFAHMI", "MUFID AKBAR MAULANA", "NAJWA HABIBAH", "NAZWA REI AMALINA W.", 
-                "NISA AULIA ANGGRAENI", "RADITYA FAJRI SYAHDAN N.", "RAFKA KHANNAFI", "SOHEBUL AKMAL", 
-                "SUCI NURLAELA KELUD PUTRI", "ZAM ZAM AL BILAL RAMDAN",
-            ];
-
-            students.forEach((name, index) => {
+            const students = ["AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "AQSHAL ILHAM SYAFATULLAH", "AZAID IBNU FAHDI", "BHEKTI BAHTIAR", "DADI PANGESTU", "DAFFA AL FATTAH HUSAINI", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA", "FAHREZA OKTA NURFAUZI", "FAIZAH MAYA APRLILIYANI", "FATHAN KAISYA KHOIRULLOH", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA", "INTAN NUR RAMADHANI", "KANAYA ANUGRAH ALFINO", "KANAYA BIANCA ALMAHYRA", "KENI RIZKI ANINDIA", "KEYSA FEBRIANTI", "KHOLIF ADIL MUBAROK", "LULU WULAN", "MICHAELA ADELIA APRILIANI", "MOHAMMAD ZAHEL ALFAHMI", "MUFID AKBAR MAULANA", "NAJWA HABIBAH", "NAZWA REI AMALINA W.", "NISA AULIA ANGGRAENI", "RADITYA FAJRI SYAHDAN N.", "RAFKA KHANNAFI", "SOHEBUL AKMAL", "SUCI NURLAELA KELUD PUTRI", "ZAM ZAM AL BILAL RAMDAN"];
+            students.forEach(name => {
                 list.innerHTML += `
                     <div class="m-card animate__animated animate__fadeInUp">
                         <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="avatar">
                         <h4>${name}</h4>
                         <p>Siswa 7B</p>
-                    </div>
-                `;
+                    </div>`;
             });
         }
 
-        document.getElementById('msgInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendToFirebase();
-            }
+        document.getElementById('msgInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') sendToFirebase();
         });
-
-        window.onload = () => {
-            console.log("7B Class Website Updated with New Schedule Data");
-        };
     </script>
 </body>
 </html>
