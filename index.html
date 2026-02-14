@@ -272,13 +272,23 @@
         }
         .day-card p { 
             font-size: 13px; 
-            margin-bottom: 6px; 
+            margin-bottom: 10px; 
             opacity: 0.9; 
             background: rgba(255,255,255,0.05);
-            padding: 5px;
-            border-radius: 8px;
+            padding: 8px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+            gap: 10px;
+            text-align: left;
         }
-        .day-card.wide { grid-column: 1 / span 2; width: 70%; margin: 0 auto; }
+        .day-card p i {
+            width: 20px;
+            text-align: center;
+            color: var(--accent);
+        }
+        .day-card.wide { grid-column: 1 / span 2; width: 100%; margin: 0 auto; }
 
         /* =========================================
            6. GALLERY (UPDATED: CLASS PHOTO ONLY)
@@ -390,7 +400,7 @@
 
         <div class="news-ticker animate__animated animate__fadeInUp">
             <i class="fas fa-bullhorn"></i>
-            <marquee>Info: Besok kumpul tugas Matematika! • Piket hari ini: Kelompok 3 • Website 7B sudah versi Ultra!</marquee>
+            <marquee>Info: Cek Jadwal Pelajaran Terbaru! • Semangat Belajar Kelas 7B Matsanesca! • Website Updated!</marquee>
         </div>
 
         <div class="menu-grid">
@@ -402,7 +412,7 @@
             <div class="menu-card" onclick="showPage('members')">
                 <i class="fas fa-user-friends"></i>
                 <h4>Anggota</h4>
-                <div class="hint">33 Students <i class="fas fa-chevron-right"></i></div>
+                <div class="hint">34 Students <i class="fas fa-chevron-right"></i></div>
             </div>
             <div class="menu-card" onclick="window.open('https://tiktok.com/@class.7b.matsanesca')">
                 <i class="fab fa-tiktok"></i>
@@ -500,7 +510,6 @@
            9. CORE LOGIC & DATABASE
            ========================================= */
         
-        // --- FIREBASE CONFIGURATION ---
         const firebaseConfig = {
             apiKey: "ISI_API_KEY_KAMU",
             databaseURL: "ISI_DATABASE_URL_KAMU",
@@ -515,7 +524,6 @@
         }
         const db = firebase.database();
 
-        // --- PAGE SYSTEM ---
         function showPage(id) {
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
@@ -525,9 +533,7 @@
             window.scrollTo(0,0);
             
             if(id === 'home') document.getElementById('n-home').classList.add('active');
-            if(id === 'gallery') {
-                document.getElementById('n-gal').classList.add('active');
-            }
+            if(id === 'gallery') document.getElementById('n-gal').classList.add('active');
             if(id === 'jadwal') {
                 document.getElementById('n-jad').classList.add('active');
                 loadTab('pelajaran');
@@ -535,7 +541,6 @@
             if(id === 'members') loadStudents();
         }
 
-        // --- CHAT SYSTEM ---
         function sendToFirebase() {
             const input = document.getElementById('msgInput');
             const msgText = input.value.trim();
@@ -548,7 +553,6 @@
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 });
                 input.value = "";
-                
                 const audio = new Audio('https://www.soundjay.com/buttons/button-4.mp3');
                 audio.volume = 0.2;
                 audio.play();
@@ -558,21 +562,16 @@
         db.ref('anonChat').limitToLast(50).on('value', snap => {
             const box = document.getElementById('chat-messages');
             box.innerHTML = "";
-            
             if(!snap.exists()) {
-                box.innerHTML = "<p style='text-align:center; opacity:0.5; margin-top:20px;'>Belum ada pesan. Mulai obrolan!</p>";
+                box.innerHTML = "<p style='text-align:center; opacity:0.5; margin-top:20px;'>Belum ada pesan.</p>";
                 return;
             }
-
             snap.forEach(child => {
                 const data = child.val();
                 const isMe = (data.sender === myLocalId); 
-                
                 const bubble = `
                     <div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
-                        <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">
-                            ${isMe ? "Anda" : data.sender}
-                        </div>
+                        <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">${isMe ? "Anda" : data.sender}</div>
                         ${data.msg}
                         <span class="msg-time">${data.time}</span>
                     </div>
@@ -582,44 +581,68 @@
             box.scrollTop = box.scrollHeight;
         });
 
-        // --- SCHEDULE DATA UPDATED ---
+        /* DATA JADWAL SESUAI GAMBAR */
         const schData = {
             pelajaran: {
-                "SENIN": ["IPA (Sains)", "Matematika", "B. Indonesia", "PABP", "Olahraga"],
-                "SELASA": ["IPS", "B. Inggris", "Informatika", "Seni Budaya", "PKN"],
-                "RABU": ["Matematika", "IPA (Sains)", "B. Indonesia", "B. Arab", "Seni Musik"],
-                "KAMIS": ["B. Inggris", "IPS", "PABP (Agama)", "PKN", "TIK"],
-                "JUMAT": ["B. Sunda", "Prakarya", "Matematika", "B. Indonesia", "Literasi"]
+                "SENIN": [
+                    { name: "B. Indonesia", icon: "fa-book" },
+                    { name: "Seni Budaya", icon: "fa-palette" },
+                    { name: "B. Jawa", icon: "fa-language" }
+                ],
+                "SELASA": [
+                    { name: "Penjas (Olahraga)", icon: "fa-volleyball-ball" },
+                    { name: "Fiqih", icon: "fa-mosque" },
+                    { name: "IPS", icon: "fa-globe-asia" },
+                    { name: "SKI", icon: "fa-history" }
+                ],
+                "RABU": [
+                    { name: "Informatika", icon: "fa-laptop-code" },
+                    { name: "MTK", icon: "fa-calculator" },
+                    { name: "B. Indonesia", icon: "fa-book" },
+                    { name: "B. Inggris", icon: "fa-atlas" }
+                ],
+                "KAMIS": [
+                    { name: "B. Arab", icon: "fa-quran" },
+                    { name: "IPA", icon: "fa-microscope" },
+                    { name: "B. Inggris", icon: "fa-atlas" },
+                    { name: "IPS", icon: "fa-globe-asia" }
+                ],
+                "JUMAT": [
+                    { name: "Akidah", icon: "fa-pray" },
+                    { name: "PKN", icon: "fa-balance-scale" }
+                ],
+                "SABTU": [
+                    { name: "Quran Hadis", icon: "fa-book-open" },
+                    { name: "MTK", icon: "fa-calculator" },
+                    { name: "IPA", icon: "fa-microscope" }
+                ]
             }
         };
 
         function loadTab(type) {
             const content = document.getElementById('schedule-content');
-            document.getElementById('btn-pel').classList.toggle('active', type === 'pelajaran');
-            
             content.innerHTML = "";
-            const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
+            const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
             
             days.forEach(day => {
-                const isFri = day === "JUMAT";
-                let items = schData[type][day].map(s => `<p><i class="fas fa-check-circle" style="font-size:10px; color:var(--accent); margin-right:8px;"></i>${s}</p>`).join('');
+                let items = schData[type][day].map(s => `
+                    <p><i class="fas ${s.icon}"></i> ${s.name}</p>
+                `).join('');
                 
                 content.innerHTML += `
-                    <div class="day-card ${isFri ? 'wide' : ''} animate__animated animate__fadeIn">
-                        <h3><i class="far fa-calendar-check"></i> ${day}</h3>
+                    <div class="day-card animate__animated animate__fadeIn">
+                        <h3>${day}</h3>
                         ${items}
                     </div>
                 `;
             });
         }
 
-        // --- STUDENT LIST RENDERER ---
         function loadStudents() {
             const list = document.getElementById('student-list');
             list.innerHTML = "";
-            
             const students = [
-                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", 
+                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "ALMA GUSTIANI PUTRI",
                 "AQSHAL ILHAM SYAFATULLAH", "AZAID IBNU FAHDI", "BHEKTI BAHTIAR", "DADI PANGESTU", 
                 "DAFFA AL FATTAH HUSAINI", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA", "FAHREZA OKTA NURFAUZI", 
                 "FAIZAH MAYA APRLILIYANI", "FATHAN KAISYA KHOIRULLOH", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA", 
@@ -629,8 +652,7 @@
                 "NISA AULIA ANGGRAENI", "RADITYA FAJRI SYAHDAN N.", "RAFKA KHANNAFI", "SOHEBUL AKMAL", 
                 "SUCI NURLAELA KELUD PUTRI", "ZAM ZAM AL BILAL RAMDAN",
             ];
-
-            students.forEach((name, index) => {
+            students.forEach((name) => {
                 list.innerHTML += `
                     <div class="m-card animate__animated animate__fadeInUp">
                         <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="avatar">
@@ -642,14 +664,10 @@
         }
 
         document.getElementById('msgInput').addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                sendToFirebase();
-            }
+            if (e.key === 'Enter') sendToFirebase();
         });
 
-        window.onload = () => {
-            console.log("7B Class Website Updated with Schedule and Class Photo");
-        };
+        window.onload = () => { console.log("7B Class Website Updated"); };
     </script>
 </body>
 </html>
