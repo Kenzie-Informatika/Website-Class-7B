@@ -270,28 +270,35 @@
             letter-spacing: 2px;
             font-weight: 800;
         }
-        .day-card p { 
-            font-size: 13px; 
-            margin-bottom: 10px; 
-            opacity: 0.9; 
-            background: rgba(255,255,255,0.05);
-            padding: 8px;
-            border-radius: 12px;
+        .subject-item {
             display: flex;
+            flex-direction: column;
             align-items: center;
-            justify-content: flex-start;
-            gap: 10px;
-            text-align: left;
+            margin-bottom: 12px;
+            background: rgba(255,255,255,0.05);
+            padding: 10px;
+            border-radius: 15px;
+            transition: 0.2s;
         }
-        .day-card p i {
-            width: 20px;
-            text-align: center;
+        .subject-item i {
+            font-size: 20px;
             color: var(--accent);
+            margin-bottom: 5px;
         }
-        .day-card.wide { grid-column: 1 / span 2; width: 100%; margin: 0 auto; }
+        .subject-item span {
+            font-size: 12px;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+        .day-card.wide { grid-column: 1 / span 2; width: 100%; max-width: 550px; }
+        .wide .subject-list-flex {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+        }
 
         /* =========================================
-           6. GALLERY (UPDATED: CLASS PHOTO ONLY)
+           6. GALLERY
            ========================================= */
         .gallery-grid { 
             display: block; 
@@ -377,7 +384,6 @@
         .nav-link i { font-size: 24px; display: block; margin-bottom: 4px; }
         .nav-link span { font-weight: 600; }
 
-        /* Mobile Optimization */
         @media (max-width: 400px) {
             .bottom-nav { gap: 30px; padding: 12px 25px; }
             .menu-grid { grid-template-columns: 1fr; }
@@ -400,7 +406,7 @@
 
         <div class="news-ticker animate__animated animate__fadeInUp">
             <i class="fas fa-bullhorn"></i>
-            <marquee>Info: Cek Jadwal Pelajaran Terbaru! • Semangat Belajar Kelas 7B Matsanesca! • Website Updated!</marquee>
+            <marquee>Info: Besok kumpul tugas Matematika! • Piket hari ini: Kelompok 3 • Website 7B sudah versi Ultra!</marquee>
         </div>
 
         <div class="menu-grid">
@@ -412,7 +418,7 @@
             <div class="menu-card" onclick="showPage('members')">
                 <i class="fas fa-user-friends"></i>
                 <h4>Anggota</h4>
-                <div class="hint">34 Students <i class="fas fa-chevron-right"></i></div>
+                <div class="hint">33 Students <i class="fas fa-chevron-right"></i></div>
             </div>
             <div class="menu-card" onclick="window.open('https://tiktok.com/@class.7b.matsanesca')">
                 <i class="fab fa-tiktok"></i>
@@ -510,11 +516,14 @@
            9. CORE LOGIC & DATABASE
            ========================================= */
         
-        const firebaseConfig = {
-            apiKey: "ISI_API_KEY_KAMU",
-            databaseURL: "ISI_DATABASE_URL_KAMU",
-            projectId: "ISI_PROJECT_ID",
-            appId: "ISI_APP_ID"
+      const firebaseConfig = {
+        apiKey: "AIzaSyBPDhm0H0aA2M1z1Ex5JuPW94uyY0WyQ3Y",
+        authDomain: "class-7b.firebaseapp.com",
+        projectId: "class-7b",
+        storageBucket: "class-7b.firebasestorage.app",
+        messagingSenderId: "1022938564386",
+        appId: "1:1022938564386:web:7451da341d44903e48877b",
+        measurementId: "G-M0CP4D7573"
         };
 
         const myLocalId = 'User_' + Math.floor(Math.random() * 9999);
@@ -544,7 +553,6 @@
         function sendToFirebase() {
             const input = document.getElementById('msgInput');
             const msgText = input.value.trim();
-            
             if(msgText !== "") {
                 db.ref('anonChat').push({
                     sender: myLocalId,
@@ -553,9 +561,6 @@
                     time: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
                 });
                 input.value = "";
-                const audio = new Audio('https://www.soundjay.com/buttons/button-4.mp3');
-                audio.volume = 0.2;
-                audio.play();
             }
         }
 
@@ -563,58 +568,57 @@
             const box = document.getElementById('chat-messages');
             box.innerHTML = "";
             if(!snap.exists()) {
-                box.innerHTML = "<p style='text-align:center; opacity:0.5; margin-top:20px;'>Belum ada pesan.</p>";
+                box.innerHTML = "<p style='text-align:center; opacity:0.5; margin-top:20px;'>Belum ada pesan. Mulai obrolan!</p>";
                 return;
             }
             snap.forEach(child => {
                 const data = child.val();
                 const isMe = (data.sender === myLocalId); 
-                const bubble = `
-                    <div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
-                        <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">${isMe ? "Anda" : data.sender}</div>
-                        ${data.msg}
-                        <span class="msg-time">${data.time}</span>
-                    </div>
-                `;
+                const bubble = `<div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
+                    <div style="font-size:10px; font-weight:800; color:var(--accent); margin-bottom:4px;">${isMe ? "Anda" : data.sender}</div>
+                    ${data.msg}<span class="msg-time">${data.time}</span></div>`;
                 box.innerHTML += bubble;
             });
             box.scrollTop = box.scrollHeight;
         });
 
-        /* DATA JADWAL SESUAI GAMBAR */
+        // --- UPDATED SCHEDULE DATA WITH ICONS ---
         const schData = {
             pelajaran: {
                 "SENIN": [
-                    { name: "B. Indonesia", icon: "fa-book" },
-                    { name: "Seni Budaya", icon: "fa-palette" },
-                    { name: "B. Jawa", icon: "fa-language" }
+                    { name: "IPA", icon: "fas fa-microscope" },
+                    { name: "Matematika", icon: "fas fa-calculator" },
+                    { name: "B. Indonesia", icon: "fas fa-book" },
+                    { name: "PABP", icon: "fas fa-mosque" },
+                    { name: "Olahraga", icon: "fas fa-running" }
                 ],
                 "SELASA": [
-                    { name: "Penjas (Olahraga)", icon: "fa-volleyball-ball" },
-                    { name: "Fiqih", icon: "fa-mosque" },
-                    { name: "IPS", icon: "fa-globe-asia" },
-                    { name: "SKI", icon: "fa-history" }
+                    { name: "IPS", icon: "fas fa-globe-asia" },
+                    { name: "B. Inggris", icon: "fas fa-language" },
+                    { name: "Informatika", icon: "fas fa-laptop-code" },
+                    { name: "Seni Budaya", icon: "fas fa-palette" },
+                    { name: "PKN", icon: "fas fa-shield-alt" }
                 ],
                 "RABU": [
-                    { name: "Informatika", icon: "fa-laptop-code" },
-                    { name: "MTK", icon: "fa-calculator" },
-                    { name: "B. Indonesia", icon: "fa-book" },
-                    { name: "B. Inggris", icon: "fa-atlas" }
+                    { name: "Matematika", icon: "fas fa-calculator" },
+                    { name: "IPA", icon: "fas fa-flask" },
+                    { name: "B. Indonesia", icon: "fas fa-book-open" },
+                    { name: "B. Arab", icon: "fas fa-star-and-crescent" },
+                    { name: "Seni Musik", icon: "fas fa-music" }
                 ],
                 "KAMIS": [
-                    { name: "B. Arab", icon: "fa-quran" },
-                    { name: "IPA", icon: "fa-microscope" },
-                    { name: "B. Inggris", icon: "fa-atlas" },
-                    { name: "IPS", icon: "fa-globe-asia" }
+                    { name: "B. Inggris", icon: "fas fa-atlas" },
+                    { name: "IPS", icon: "fas fa-map-marked-alt" },
+                    { name: "PABP", icon: "fas fa-pray" },
+                    { name: "PKN", icon: "fas fa-balance-scale" },
+                    { name: "TIK", icon: "fas fa-desktop" }
                 ],
                 "JUMAT": [
-                    { name: "Akidah", icon: "fa-pray" },
-                    { name: "PKN", icon: "fa-balance-scale" }
-                ],
-                "SABTU": [
-                    { name: "Quran Hadis", icon: "fa-book-open" },
-                    { name: "MTK", icon: "fa-calculator" },
-                    { name: "IPA", icon: "fa-microscope" }
+                    { name: "B. Sunda", icon: "fas fa-scroll" },
+                    { name: "Prakarya", icon: "fas fa-hammer" },
+                    { name: "Matematika", icon: "fas fa-square-root-alt" },
+                    { name: "B. Indonesia", icon: "fas fa-feather" },
+                    { name: "Literasi", icon: "fas fa-book-reader" }
                 ]
             }
         };
@@ -622,17 +626,23 @@
         function loadTab(type) {
             const content = document.getElementById('schedule-content');
             content.innerHTML = "";
-            const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT", "SABTU"];
+            const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
             
             days.forEach(day => {
-                let items = schData[type][day].map(s => `
-                    <p><i class="fas ${s.icon}"></i> ${s.name}</p>
+                const isFri = day === "JUMAT";
+                let itemsHtml = schData[type][day].map(item => `
+                    <div class="subject-item">
+                        <i class="${item.icon}"></i>
+                        <span>${item.name}</span>
+                    </div>
                 `).join('');
                 
                 content.innerHTML += `
-                    <div class="day-card animate__animated animate__fadeIn">
+                    <div class="day-card ${isFri ? 'wide' : ''} animate__animated animate__fadeIn">
                         <h3>${day}</h3>
-                        ${items}
+                        <div class="subject-list-flex">
+                            ${itemsHtml}
+                        </div>
                     </div>
                 `;
             });
@@ -642,7 +652,7 @@
             const list = document.getElementById('student-list');
             list.innerHTML = "";
             const students = [
-                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "ALMA GUSTIANI PUTRI",
+                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", 
                 "AQSHAL ILHAM SYAFATULLAH", "AZAID IBNU FAHDI", "BHEKTI BAHTIAR", "DADI PANGESTU", 
                 "DAFFA AL FATTAH HUSAINI", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA", "FAHREZA OKTA NURFAUZI", 
                 "FAIZAH MAYA APRLILIYANI", "FATHAN KAISYA KHOIRULLOH", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA", 
@@ -653,21 +663,15 @@
                 "SUCI NURLAELA KELUD PUTRI", "ZAM ZAM AL BILAL RAMDAN",
             ];
             students.forEach((name) => {
-                list.innerHTML += `
-                    <div class="m-card animate__animated animate__fadeInUp">
-                        <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="avatar">
-                        <h4>${name}</h4>
-                        <p>Siswa 7B</p>
-                    </div>
-                `;
+                list.innerHTML += `<div class="m-card animate__animated animate__fadeInUp">
+                    <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="avatar">
+                    <h4>${name}</h4><p>Siswa 7B</p></div>`;
             });
         }
 
         document.getElementById('msgInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') sendToFirebase();
         });
-
-        window.onload = () => { console.log("7B Class Website Updated"); };
     </script>
 </body>
 </html>
