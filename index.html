@@ -328,6 +328,7 @@
             margin-bottom: 12px; 
             padding: 3px;
             background: #fff;
+            object-fit: cover;
         }
         .m-card h4 { font-size: 14px; font-weight: 700; }
         .m-card p { font-size: 11px; color: var(--accent); font-weight: 600; text-transform: uppercase; }
@@ -510,17 +511,13 @@
 
         // --- PAGE SYSTEM ---
         function showPage(id) {
-            // Hide all pages
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-            // Remove active from nav
             document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
             
-            // Show target
             const targetPage = document.getElementById(id);
             targetPage.classList.add('active');
             window.scrollTo(0,0);
             
-            // Set nav active
             if(id === 'home') document.getElementById('n-home').classList.add('active');
             if(id === 'gallery') {
                 document.getElementById('n-gal').classList.add('active');
@@ -548,14 +545,12 @@
                 });
                 input.value = "";
                 
-                // Play sound effect (optional)
                 const audio = new Audio('https://www.soundjay.com/buttons/button-4.mp3');
                 audio.volume = 0.2;
                 audio.play();
             }
         }
 
-        // Realtime Listener for Chats
         db.ref('anonChat').limitToLast(30).on('value', snap => {
             const box = document.getElementById('chat-messages');
             box.innerHTML = "";
@@ -567,7 +562,7 @@
 
             snap.forEach(child => {
                 const data = child.val();
-                const isMe = data.sender.includes('User_'); // Simplified check
+                const isMe = data.sender.includes('User_'); 
                 
                 const bubble = `
                     <div class="msg-bubble ${isMe ? 'msg-me' : 'msg-other'}">
@@ -597,7 +592,6 @@
         function loadTab(type) {
             const content = document.getElementById('schedule-content');
             document.getElementById('btn-pel').classList.toggle('active', type === 'pelajaran');
-            document.getElementById('btn-pik').classList.toggle('active', type === 'piket');
             
             content.innerHTML = "";
             const days = ["SENIN", "SELASA", "RABU", "KAMIS", "JUMAT"];
@@ -615,7 +609,6 @@
             });
         }
 
-        // --- GALLERY RENDERER (50 CAT MEMES) ---
         function renderGallery() {
             const gal = document.getElementById('cat-gallery');
             gal.innerHTML = "";
@@ -627,7 +620,6 @@
                 "6Vo66vEicXfoc", "L7XpYvYtBqQxy", "JIX9t2j0ZTN9S", "n4lHZS3C0z680"
             ];
 
-            // Loop to create 50 items
             for(let i = 0; i < 50; i++) {
                 const gifId = catUrls[i % catUrls.length];
                 gal.innerHTML += `
@@ -638,14 +630,13 @@
             }
         }
 
-        // --- STUDENT LIST RENDERER ---
+        // --- STUDENT LIST RENDERER (Updated with Placeholder Avatar) ---
         function loadStudents() {
             const list = document.getElementById('student-list');
             list.innerHTML = "";
             
-            // Updated names based on your document
             const students = [
-                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", "ZAM ZAM AL BILAL RAMDAN",
+                "AI SAKIRA ZARA", "ALDIANSYAH FIRDAUZ", "ALFIRA KHOIRUNNISA", 
                 "AQSHAL ILHAM SYAFATULLAH", "AZAID IBNU FAHDI", "BHEKTI BAHTIAR", "DADI PANGESTU", 
                 "DAFFA AL FATTAH HUSAINI", "DWI PUTRI RAMADHANI", "FADILLAH AZZAHRA", "FAHREZA OKTA NURFAUZI", 
                 "FAIZAH MAYA APRLILIYANI", "FATHAN KAISYA KHOIRULLOH", "GILANG ARDIANSYAH", "HAFIFAH ZAHRATUNISA", 
@@ -653,30 +644,28 @@
                 "KEYSA FEBRIANTI", "KHOLIF ADIL MUBAROK", "LULU WULAN", "MICHAELA ADELIA APRILIANI", 
                 "MOHAMMAD ZAHEL ALFAHMI", "MUFID AKBAR MAULANA", "NAJWA HABIBAH", "NAZWA REI AMALINA W.", 
                 "NISA AULIA ANGGRAENI", "RADITYA FAJRI SYAHDAN N.", "RAFKA KHANNAFI", "SOHEBUL AKMAL", 
-                "SUCI NURLAELA KELUD PUTRI", 
+                "SUCI NURLAELA KELUD PUTRI", "ZAM ZAM AL BILAL RAMDAN",
             ];
 
             students.forEach((name, index) => {
                 list.innerHTML += `
                     <div class="m-card animate__animated animate__fadeInUp">
-                        <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${name}" alt="avatar">
+                        <img src="https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp&f=y" alt="avatar">
                         <h4>${name}</h4>
-                        <p>${index === 0 ? 'Siswa 7B' : 'Siswa 7B'}</p>
+                        <p>Siswa 7B</p>
                     </div>
                 `;
             });
         }
 
-        // Listen for Enter Key in Chat
         document.getElementById('msgInput').addEventListener('keypress', function (e) {
             if (e.key === 'Enter') {
                 sendToFirebase();
             }
         });
 
-        // Initialize Home
         window.onload = () => {
-            console.log("7B Class Website Loaded Successfully");
+            console.log("7B Class Website Updated Successfully");
         };
     </script>
 </body>
